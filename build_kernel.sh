@@ -42,28 +42,6 @@ export SUBARCH=arm64
 export HEADER_ARCH=arm64
 DEFCONFIG=a9y18qlte_eur_open_defconfig
 
-# KernelSU Support
-KSU=`cat arch/arm64/configs/$DEFCONFIG | grep CONFIG_KSU=y`
-if [ "$KSU" == "CONFIG_KSU=y" ]; then
-	echo "KernelSU support is enabled, downloading KernelSU..."
-	rm -rf KernelSU &>> $REALLOGGER
-	cd drivers
-	rm -rf kernelsu &>> $REALLOGGER
-	cd ..
-	git clone https://github.com/riarumoda/KernelSU &>> $REALLOGGER
-	cd drivers
-	ln -sf ../KernelSU/kernel kernelsu &>> $REALLOGGER
-	cd ..
-	sed -i '/source "drivers\/security\/samsung\/icdrv\/Kconfig"/a source "drivers\/kernelsu\/Kconfig"' drivers/Kconfig
-else
-	echo "KernelSU support is disabled, skipping..."
-	rm -rf KernelSU &>> $REALLOGGER
-	cd drivers
-	rm -rf kernelsu &>> $REALLOGGER
-	cd ..
-	sed -i '/source "drivers\/kernelsu\/Kconfig"/d' drivers/Kconfig
-fi
-
 # Cleanup
 echo "Cleaning up out directory..."
 rm -rf out
